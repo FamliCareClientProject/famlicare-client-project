@@ -29,7 +29,7 @@ import LovedOneForm from "../LovedOneForm/LovedOneForm";
 import Messages from "../Messages/Messages";
 import NewUserForm from "../NewUserForm/NewUserForm";
 import { ThemeProvider } from "@mui/material";
-import theme from "../Theme/FamliCareTheme";
+import theme, { globalStyles } from "../Theme/FamliCareTheme";
 // Step components for registration process
 import RegisterPage from '../RegisterPage/RegisterPage';
 import RegisterPage1 from '../RegisterPage/RegisterPage1';
@@ -50,7 +50,7 @@ function App() {
   }, [dispatch]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} globalStyles={globalStyles}>
       <Router>
         <div>
           <Nav />
