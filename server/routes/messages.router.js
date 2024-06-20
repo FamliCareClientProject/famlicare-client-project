@@ -3,12 +3,14 @@ const pool = require('../modules/pool');
 const router = express.Router();
 const { Server } = require("socket.io");
 const cors = require("cors")
-
+const pgAdapter = require("@socket.io/postgres-adapter")
 //!  CHANGE BOILER PLATE TO REFLECT EXPRESS FRAME WORK NOT HTTP 
 //DEFINE A SEPERATE PORT FOR SOCKET.IO TO BE ON
 const PORT = process.env.PORT || 3000
 const app = express()
 app.use(cors())
+
+
 
 const server = app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`)
@@ -24,10 +26,27 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   //server side when a user is connected
-  console.log(socket.id)
+  console.log('connected!')
+  socket.on('new message', (message) => {
+    const lovedOneId = req.user.loved_one_id
+    const userId = req.user.id
+    const sqlText = `INSERT INTO messages("loved_one_id", "user_id", "message_text")
+                        VALUES ($1, $2, $3);`
+    const sqlValues = [lovedOneId, userId, message]
+
+    pool.query(sqlText, sqlValues)
+      .then((result) => {
+        console.log('send successful')
+        res.sendStatus(201)})
+  })
+      .catch((error) => {
+        console.log('error in sending message to db', error)
+        res.sendstatus(500)
+      })
 })
 
 
+io.adapter(pgAdapter.createAdapter(pool))
 
 /**
  * GET route template

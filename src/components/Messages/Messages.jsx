@@ -12,39 +12,34 @@ function Messages() {
     const history = useHistory();
 
     //declare states 
-    const [activeUsers, setActiveUsers] = useState(0)
-    const [socketid, setSocketId] = useState('')
-    const [id, setId] = useState('')
+    const [message, setMessage] = useState('')
+    const socket = io("ws://localhost:3000")
 
     useEffect(() => {
-        const socket = io("ws://localhost:3000")
-            socket.on('connect', () => {
-                console.log('socket.id is:', socket.id)
-    })
+        //connect with the server
+        socket.on('connect', () => {
+            console.log('Connected!')  
+        })
 
-   
     }, [])
+    
+    
+        
+        const sendMessage = () => {
+            socket.emit('new message', message)
+            setMessage('')
+        }
 
-    //    //get socket id of a socket or a user
-    //    socket.on('getId', (idOfSocket) => {
-    //     setId(idOfSocket)
-    //     console.log('the id of the user is:', idOfSocket)
-    //    })
 
-
-
-   
-   
-  
-
-    //     //get all users 
-
-    // const messages = useSelector((store) => store.messages)
-    // console.log('Message Data is:', messages)
 
     return (
         <div>
             <h1>Messages</h1>
+            <input
+            placeholder="message..."
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}/>
+            <button onClick={(sendMessage)}>send</button>
         </div>
     )
 }
