@@ -28,21 +28,20 @@ io.on('connection', (socket) => {
   //server side when a user is connected
   console.log('connected!')
   socket.on('new message', (message) => {
-    const lovedOneId = req.user.loved_one_id
-    const userId = req.user.id
-    const sqlText = `INSERT INTO messages("loved_one_id", "user_id", "message_text")
-                        VALUES ($1, $2, $3);`
-    const sqlValues = [lovedOneId, userId, message]
+    //! no longer have access to req.user while using socket 
+    // const lovedOneId = req.user.loved_one_id
+    // const userId = req.user.id
+    const sqlText = `INSERT INTO messages("message_text")
+                        VALUES ($1);`
+    const sqlValues = [message]
 
     pool.query(sqlText, sqlValues)
       .then((result) => {
-        console.log('send successful')
-        res.sendStatus(201)})
+        console.log('send successful')})
   })
-      .catch((error) => {
-        console.log('error in sending message to db', error)
-        res.sendstatus(500)
-      })
+    pool.on('error', (err) => {
+      console.error("Postgres error", err)
+    })
 })
 
 
