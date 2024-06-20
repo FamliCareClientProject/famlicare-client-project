@@ -1,59 +1,78 @@
 const express = require('express');
 const pool = require('../modules/pool');
 const router = express.Router();
-const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors")
 
+//!  CHANGE BOILER PLATE TO REFLECT EXPRESS FRAME WORK NOT HTTP 
+//DEFINE A SEPERATE PORT FOR SOCKET.IO TO BE ON
+const PORT = process.env.PORT || 3000
+const app = express()
+app.use(cors())
 
-const server = http.createServer(router);
+const server = app.listen(PORT, () => {
+  console.log(`listening on port ${PORT}`)
+})
+
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
     methods: ["GET", "POST"]
+    //Seperate domain for the front end server ? 
   },
 });
+
+io.on('connection', (socket) => {
+  //server side when a user is connected
+  console.log(socket.id)
+})
 
 
 
 /**
  * GET route template
  */
-router.get('/', (req, res) => {
-  // GET route code here
-  console.log('💬 MESSAGES GET ROUTE IS ONLINE 💬');
+// router.get('/', (req, res) => {
+//   // GET route code here
+//   console.log('💬 MESSAGES GET ROUTE IS ONLINE 💬');
 
-  const sqltext = `SELECT * FROM messages`
+//   const sqltext = `SELECT * FROM messages`
 
-  pool
-    .query(sqltext)
-    .then((dbres) => {
-      console.log(dbres.rows)
-      res.send(dbres.rows)
-    })
-    .catch((err) => {
-      console.log('Error In GET ROUTE', err)
-      res.sendStatus(500)
-    })
+//   pool
+//     .query(sqltext)
+//     .then((dbres) => {
+//       console.log(dbres.rows)
+//       res.send(dbres.rows)
+//     })
+//     .catch((err) => {
+//       console.log('Error In GET ROUTE', err)
+//       res.sendStatus(500)
+//     })
 
-});
+// });
 
-/**
- * POST route template
- */
-router.post('/', (req, res) => {
-  // POST route code here
-  console.log('💬 MESSAGES POST ROUTE IS ONLINE 💬');
-
-  pool
-    .query()
-    .then(() => {
-
-    })
+// io.on('connection', (socket) => {
+//   console.log('a user is connected');
+// })
 
 
-});
-server.listen(3000, () => {
-  console.log('Listening on port 3000');
-});
+
+
+
+// /**
+//  * POST route template
+//  */
+// router.post('/', (req, res) => {
+//   // POST route code here
+//   console.log('💬 MESSAGES POST ROUTE IS ONLINE 💬');
+
+//   pool
+//     .query()
+//     .then(() => {
+
+//     })
+
+
+// });
+
 module.exports = router;
