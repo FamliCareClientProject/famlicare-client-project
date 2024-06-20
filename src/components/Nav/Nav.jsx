@@ -10,6 +10,18 @@ function Nav() {
   const user = useSelector((store) => store.user);
   const theme = useTheme();
 
+  // Define the common styling properties for the buttons
+const buttonStyle = {
+  typography: 'h2', 
+  margin: theme.spacing(1),
+  backgroundColor: 'white', // Assuming you want all buttons to have a white background
+  borderRadius: 2, // Example of adding borderRadius
+  boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)', // Example boxShadow
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  },
+};
+
   return (
     <AppBar
       position="static"
