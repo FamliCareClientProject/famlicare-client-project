@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   HashRouter as Router,
   Redirect,
@@ -36,6 +36,8 @@ import RegisterPage1 from '../RegisterPage/RegisterPage1';
 import RegisterPage2 from '../RegisterPage/RegisterPage2';
 import RegisterPage3 from '../RegisterPage/RegisterPage3';
 import RegisterPage4 from '../RegisterPage/RegisterPage4';
+//socket.io imports
+import socket from '../../socket.js'
 
 
 import "./App.css";
@@ -44,10 +46,32 @@ function App() {
   const dispatch = useDispatch();
 
   const user = useSelector((store) => store.user);
+  
+  //import socket.io event listeners 
+  const [isConnected, setIsConnected] = useState(socket.connected)
 
   useEffect(() => {
+
     dispatch({ type: "FETCH_USER" });
+
+    function onConnect(){
+      setIsConnected(true)
+    }
+
+    function onDisconnect(){
+      setIsConnected(false)
+    }
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+    };
   }, [dispatch]);
+
+  
 
   return (
     <ThemeProvider theme={theme}>
