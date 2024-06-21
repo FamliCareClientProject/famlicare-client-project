@@ -24,7 +24,7 @@ const io = new Server(server, {
     origin: "http://localhost:5173",
     methods: ["GET", "POST"]
     //Seperate domain for the front end server ? 
-  },
+  }, 
 });
 
 // //Share User Context with Socket.io 

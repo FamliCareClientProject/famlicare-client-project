@@ -1,11 +1,13 @@
 
 const messages = (state = [], action) => {
-    switch (action.type) {
-      case 'SET_MESSAGES':
-        return action.payload;
+  switch (action.type) {
+    case 'SET_MESSAGES':
+      return action.payload;
+    case 'SEND_MESSAGES':
+      return action.payload;
+    default:
+      return state;
+  }
+};
 
-        default: return state
-    }
-  };
-
-  export default messages
+export default messages;
