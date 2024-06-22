@@ -76,12 +76,12 @@ io.adapter(pgAdapter.createAdapter(pool))
 
 
 //Socket.io connection/event listeners
+//!don't know how to move this to the messages router yet 
 io.on('connect', (socket) => {
   //server side when a user is connected
   console.log('connected! User data is:', socket.request.user)
   
   //!the socket.on events must be inside the io.on 'connect'
-
   //socket event listener for recieving a new message:
   socket.on('new message', (message) => {
     console.log('new message recieved!')
