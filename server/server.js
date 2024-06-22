@@ -32,20 +32,11 @@ app.use('/api/user', userRouter);
 app.use('/api/care-team', careTeamRouter);
 app.use('/api/care-vault', careVaultRouter);
 app.use('/api/loved-one', lovedOneRouter);
-//app.use('/api/messages', messagesRouter);
+app.use('/api/messages', messagesRouter);
 app.use('/fonts', express.static(path.join(__dirname, '../../public/fonts')));
 
 
-
-
-
-
-
-
-
-
-//! stuff 
-
+//! socket boilerplate imports
 const pool = require('./modules/pool');
 const { Server } = require("socket.io");
 const cors = require("cors")
@@ -63,37 +54,8 @@ const io = new Server(server, {
   }, 
 });
 
-// //Share User Context with Socket.io 
-io.on('connect', (socket) => {
-  //server side when a user is connected
-  console.log('connected!', socket.request.user)
-  
-  //the socket.on events must be inside the io.on 'connect'
-  const userId = socket.request.user.id
-  console.log(userId)
-  console.log('user id is:', userId)
-  const lovedOneId = socket.request.user.loved_one_id
-  console.log('lovedOneId is:', lovedOneId)
 
-  socket.on('new message', (message) => {
-    //! no longer have access to req.user while using socket 
-    console.log('new message recieved!')
-    
-    const sqlText = `INSERT INTO messages("loved_one_id", "user_id", "message_text")
-                      VALUES ($1, $2, $3);`
-    const sqlValues = [lovedOneId, userId, message]
-
-    pool.query(sqlText, sqlValues)
-      .then((result) => {
-        console.log('send successful')})
-  })
-    pool.on('error', (err) => {
-      console.error("Postgres error", err)
-    })
-})
-
-
-
+//middleware to use session in socket and express 
 function onlyForHandshake(middleware) {
   return (req, res, next) => {
     const isHandshake = req._query.sid === undefined;
@@ -105,28 +67,31 @@ function onlyForHandshake(middleware) {
   };
 }
 
-// middleware to use session in socket and express 
-
 io.engine.use(onlyForHandshake(sessionMiddleware));
 io.engine.use(onlyForHandshake(passport.session()));
 
 
+//postgres adapter to use pool with socket.io
+io.adapter(pgAdapter.createAdapter(pool))
 
 
+//Socket.io connection/event listeners
+io.on('connect', (socket) => {
+  //server side when a user is connected
+  console.log('connected! User data is:', socket.request.user)
+  
+  //!the socket.on events must be inside the io.on 'connect'
 
-
-
-
-
-io.on('new message', (message) => {
-    //! no longer have access to req.user while using socket 
+  //socket event listener for recieving a new message:
+  socket.on('new message', (message) => {
     console.log('new message recieved!')
     
-    
-    //const lovedOneId = socket.request.user.id 
-    const sqlText = `INSERT INTO messages("message_text")
-                        VALUES ($1);`
-    const sqlValues = [message]
+    const userId = socket.request.user.id
+    const lovedOneId = socket.request.user.loved_one_id
+    const sqlText = `INSERT INTO messages
+                      ("loved_one_id", "user_id", "message_text")
+                      VALUES ($1, $2, $3);`
+    const sqlValues = [lovedOneId, userId, message]
 
     pool.query(sqlText, sqlValues)
       .then((result) => {
@@ -135,8 +100,7 @@ io.on('new message', (message) => {
     pool.on('error', (err) => {
       console.error("Postgres error", err)
     })
-
-io.adapter(pgAdapter.createAdapter(pool))
+})
 
 
 

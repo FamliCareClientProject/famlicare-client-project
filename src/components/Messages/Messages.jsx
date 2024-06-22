@@ -7,33 +7,20 @@ import useSocketSetup from "./UseSocketSetup";
 import socket from "../../socket";
 
 
-
-//socket and react 
-
-// import { useState } from "react";
-
-
 function Messages() {
     const dispatch = useDispatch();
     const history = useHistory();
 
     //declare states 
     const [message, setMessage] = useState('')
-    //const [isConnected, setIsConnected] = useState(socket.connected)
-    
-    
+    //use the SocketSetup to connect
     useSocketSetup()
 
-    console.log('rendered')
-
-        
-        const sendMessage = () => {
-            socket.emit('new message', message)
-            console.log('new message emitted!')
-            setMessage('')
-        }
-
-
+    const sendMessage = () => {
+        socket.emit('new message', message)
+        console.log('new message emitted!')
+        setMessage('')
+    }
 
     return (
         <div>
