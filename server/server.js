@@ -59,11 +59,40 @@ const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
     methods: ["GET", "POST"],
-    credentials:true
+    credentials:true,
   }, 
 });
 
 // //Share User Context with Socket.io 
+io.on('connect', (socket) => {
+  //server side when a user is connected
+  console.log('connected!', socket.request.user)
+  
+  //the socket.on events must be inside the io.on 'connect'
+  const userId = socket.request.user.id
+  console.log(userId)
+  console.log('user id is:', userId)
+  const lovedOneId = socket.request.user.loved_one_id
+  console.log('lovedOneId is:', lovedOneId)
+
+  socket.on('new message', (message) => {
+    //! no longer have access to req.user while using socket 
+    console.log('new message recieved!')
+    
+    const sqlText = `INSERT INTO messages("loved_one_id", "user_id", "message_text")
+                      VALUES ($1, $2, $3);`
+    const sqlValues = [lovedOneId, userId, message]
+
+    pool.query(sqlText, sqlValues)
+      .then((result) => {
+        console.log('send successful')})
+  })
+    pool.on('error', (err) => {
+      console.error("Postgres error", err)
+    })
+})
+
+
 
 function onlyForHandshake(middleware) {
   return (req, res, next) => {
@@ -76,6 +105,7 @@ function onlyForHandshake(middleware) {
   };
 }
 
+// middleware to use session in socket and express 
 
 io.engine.use(onlyForHandshake(sessionMiddleware));
 io.engine.use(onlyForHandshake(passport.session()));
@@ -86,16 +116,9 @@ io.engine.use(onlyForHandshake(passport.session()));
 
 
 
-io.on('connection', (socket) => {
-  //server side when a user is connected
-  console.log('connected!', socket.request.user)
- 
-  // const userId = socket.request.user.firstName
-  // console.log(userId)
-  // console.log('user id is:', userId)
-})
 
-  io.on('new message', (message) => {
+
+io.on('new message', (message) => {
     //! no longer have access to req.user while using socket 
     console.log('new message recieved!')
     

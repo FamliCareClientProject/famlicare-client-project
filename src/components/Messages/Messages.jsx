@@ -3,7 +3,9 @@ import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import socket from "../../socket"
+import useSocketSetup from "./UseSocketSetup";
+import socket from "../../socket";
+
 
 
 //socket and react 
@@ -17,22 +19,11 @@ function Messages() {
 
     //declare states 
     const [message, setMessage] = useState('')
-    const [isConnected, setIsConnected] = useState(socket.connected)
+    //const [isConnected, setIsConnected] = useState(socket.connected)
+    
+    
+    useSocketSetup()
 
-
-    useEffect(() => {
-        //connect with the server
-        socket.connect(() => {
-            console.log('connected!')
-        })
-
-        return () => {
-            
-            socket.off('');
-          };
-    }, [])
-
-    socket.connect()
     console.log('rendered')
 
         
