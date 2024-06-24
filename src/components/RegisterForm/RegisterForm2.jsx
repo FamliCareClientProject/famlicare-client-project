@@ -19,8 +19,12 @@ function RegisterForm2() {
   };
 
   const uploadImageToS3 = async () => {
-//todo
-  };
+    if (file) {
+      dispatch({ type: "UPLOAD_FILES", payload: { file, lovedOneId:null } }); // Dispatch action to upload file
+      setFile(null); // Reset file state after upload
+      setFilename(""); // Reset filename state after upload
+      setFileError(""); // Clear any existing errors
+    }  };
 
   return (
     <>
