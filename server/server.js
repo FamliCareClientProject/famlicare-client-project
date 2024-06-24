@@ -100,6 +100,12 @@ io.on('connect', (socket) => {
     pool.on('error', (err) => {
       console.error("Postgres error", err)
     })
+
+    //socket event listener for join room
+    socket.on('join_room', (room) => {
+      socket.join(room);
+          console.log(`Joined Room: ${room}`);
+    })
 })
 
 

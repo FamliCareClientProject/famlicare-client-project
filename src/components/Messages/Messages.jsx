@@ -8,13 +8,20 @@ import socket from "../../socket";
 
 
 function Messages() {
-    const dispatch = useDispatch();
-    const history = useHistory();
 
     //declare states 
     const [message, setMessage] = useState('')
+    //use useSelector to grab the lovedOneId
+    const user = useSelector(store => store.user)
     //use the SocketSetup to connect
     useSocketSetup()
+
+    console.log('lovedOneid is:', user.loved_one_id)
+    const loved_one_id = user.loved_one_id
+    useEffect(() => {
+        socket.emit("join_room", loved_one_id);
+            console.log('Joined Room Succesfully !')
+    }, [])
 
     const sendMessage = () => {
         socket.emit('new message', message)
