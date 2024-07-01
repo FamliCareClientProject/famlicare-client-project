@@ -28,6 +28,7 @@ router.get('/members/:lovedOneId', (req, res) => {
 router.post("/", (req, res) => {
   const userEmail = req.body.email;
   const lovedOneId = req.user.loved_one_id;
+  const invitationCode = Object.keys(req.body)[0];
 
   // SQL query to insert a new invitation into the database
   const sqlText = `INSERT INTO invitations("email", "loved_one_id")
@@ -67,10 +68,13 @@ router.post("/", (req, res) => {
     });
 });
 
-// POST endpoint to verify an invitation code and update user's care team
+/// POST endpoint to verify an invitation code and update user's care team
 router.post('/verify-invitation', async (req, res) => {
-  const { invitationCode } = req.body;
+  console.log('Received request body:', req.body);
   const userId = req.user.id;
+
+  // Extracting the invitation code from the object keys
+  const invitationCode = Object.keys(req.body)[0];
 
   const client = await pool.connect();
 
@@ -83,6 +87,7 @@ router.post('/verify-invitation', async (req, res) => {
       FROM invitations 
       WHERE invitation_code = $1;
     `;
+    // Using the extracted invitation code
     const invitationResult = await client.query(checkInvitationSql, [invitationCode]);
 
     if (invitationResult.rows.length === 0) {
@@ -119,5 +124,4 @@ router.post('/verify-invitation', async (req, res) => {
     client.release();
   }
 });
-
 module.exports = router;

@@ -24,10 +24,12 @@ function* sendEmailToInvitedUser(action) {
  */
 function* verifyInvitationCode(action) {
   try {
+    // Extract the invitationCode from the action's payload
+    const invitationCode = action.payload;
+    console.log(invitationCode);
+    // Pass the invitationCode string directly in the request
     const response = yield call(
-      axios.post,
-      '/api/care-team/verify-invitation',
-      { invitationCode: action.payload }
+      axios.post, '/api/care-team/verify-invitation', invitationCode
     );
     if (response.status === 200) {
       yield put({ type: 'SET_LOVED_ONE', payload: response.data });

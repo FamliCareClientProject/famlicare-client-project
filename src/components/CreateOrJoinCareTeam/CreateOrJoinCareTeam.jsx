@@ -64,6 +64,7 @@ function CreateOrJoinCareTeam() {
   const handleSubmitInvitationCode = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    console.log("sending invitation code: ", invitationCode);
     dispatch(verifyInvitationCode(invitationCode));
   };
 
@@ -78,7 +79,9 @@ function CreateOrJoinCareTeam() {
    */
   useEffect(() => {
     if (verificationSuccessful) {
+      alert('You have joined the team!');
       history.push('/careteamform');
+
     } else if (error) {
       setIsSubmitting(false);
     }
