@@ -17,7 +17,7 @@ export const sendEmailToInvitedUser = (email) => ({
  */
 export const verifyInvitationCode = (invitationCode) => ({
     type: 'VERIFY_INVITATION_CODE',
-    payload: { invitationCode }
+    payload: invitationCode,
 });
 
 /**

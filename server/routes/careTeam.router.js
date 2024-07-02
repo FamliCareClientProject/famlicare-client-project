@@ -8,12 +8,10 @@ const sgMail = require("@sendgrid/mail");
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 sgMail.setApiKey(SENDGRID_API_KEY);
 
-/**
- * GET route to fetch care team members by loved one's ID
- * This route retrieves a list of care team members associated with a specific loved one.
- */
+// GET endpoint to fetch care team members by loved one's ID
 router.get('/members/:lovedOneId', (req, res) => {
   const lovedOneId = req.params.lovedOneId;
+  // SQL query to select first name, last name, and email of users associated with a loved one
   const sqlText = `SELECT first_name, last_name, email FROM "user" WHERE loved_one_id = $1`;
   
   pool.query(sqlText, [lovedOneId])
@@ -21,32 +19,28 @@ router.get('/members/:lovedOneId', (req, res) => {
       res.json(result.rows);
     })
     .catch(error => {
-      console.log('Error fetching care team members:', error);
-      res.sendStatus(500);
+      console.error('Error fetching care team members:', error);
+      res.status(500).json({ message: 'Failed to fetch care team members' });
     });
 });
 
-/**
- * POST route to invite a new user to the care team
- * This route handles the creation of an invitation for a new user to join a care team.
- * It inserts the invitation into the database and sends an email with the invitation code.
- */
+// POST endpoint to send an invitation to join a care team
 router.post("/", (req, res) => {
-  const userEmail = req.body.email; // Email of the user to invite
-  const lovedOneId = req.user.loved_one_id; // ID of the loved one associated with the care team
+  const userEmail = req.body.email;
+  const lovedOneId = req.user.loved_one_id;
+  const invitationCode = Object.keys(req.body)[0];
 
-  // SQL query to insert the new invitation into the database
+  // SQL query to insert a new invitation into the database
   const sqlText = `INSERT INTO invitations("email", "loved_one_id")
                         VALUES
                             ($1, $2)
                         RETURNING invitation_code;`;
   const sqlValues = [userEmail, lovedOneId];
 
-  pool
-    .query(sqlText, sqlValues)
+  pool.query(sqlText, sqlValues)
     .then((dbRes) => {
-      // Send the email with the invitation code
       const invitationCode = dbRes.rows[0].invitation_code;
+      // Preparing the email content
       const email = {
         to: userEmail,
         from: {
@@ -62,47 +56,47 @@ router.post("/", (req, res) => {
                      <h3>Thank you, FamliCare App</h3>`,
       };
 
-      sgMail
-        .send(email)
-        .then(() => console.log("Email Sent Successfully!"))
-        .catch((error) => console.log("Error sending email:", error.message)); // Improved error logging for email sending
-      res.sendStatus(201); // Success response
+      return sgMail.send(email);
+    })
+    .then(() => {
+      console.log("Email Sent Successfully!");
+      res.status(201).json({ message: 'Invitation sent successfully' });
     })
     .catch((error) => {
-      console.log("POST add invited user error:", error); // Log error for troubleshooting
-      res.sendStatus(500); // Internal server error response
+      console.error("Error in invitation process:", error);
+      res.status(500).json({ message: 'Failed to send invitation' });
     });
 });
 
-/**
- * POST route to validate and apply an invitation code
- * This route verifies an invitation code and updates the user's record to reflect their membership in the care team.
- * It also deletes the used invitation code from the database to prevent reuse.
- */
+/// POST endpoint to verify an invitation code and update user's care team
 router.post('/verify-invitation', async (req, res) => {
-  const { invitationCode } = req.body; // Invitation code to verify
-  const userId = req.user.id; // ID of the user who is verifying the code
+  console.log('Received request body:', req.body);
+  const userId = req.user.id;
+
+  // Extracting the invitation code from the object keys
+  const invitationCode = Object.keys(req.body)[0];
 
   const client = await pool.connect();
 
   try {
-    await client.query('BEGIN'); // Start transaction
+    await client.query('BEGIN');
 
-    // Check if the invitation code is valid
+    // SQL to check if the invitation code exists
     const checkInvitationSql = `
       SELECT loved_one_id 
       FROM invitations 
       WHERE invitation_code = $1;
     `;
+    // Using the extracted invitation code
     const invitationResult = await client.query(checkInvitationSql, [invitationCode]);
 
     if (invitationResult.rows.length === 0) {
-      throw new Error('Invalid invitation code'); // Error if code is not found
+      throw new Error('Invalid invitation code');
     }
 
     const { loved_one_id } = invitationResult.rows[0];
 
-    // Update the user's record with the loved_one_id
+    // SQL to update the user's loved_one_id and set them as a non-admin
     const updateUserSql = `
       UPDATE "user"
       SET loved_one_id = $1, 
@@ -112,23 +106,22 @@ router.post('/verify-invitation', async (req, res) => {
     `;
     const updateResult = await client.query(updateUserSql, [loved_one_id, userId]);
 
-    // Delete the used invitation
+    // SQL to delete the used invitation code
     const deleteInvitationSql = `
       DELETE FROM invitations
       WHERE invitation_code = $1;
     `;
     await client.query(deleteInvitationSql, [invitationCode]);
 
-    await client.query('COMMIT'); // Commit transaction
+    await client.query('COMMIT');
 
-    res.status(200).json(updateResult.rows[0]); // Return updated user info
+    res.status(200).json(updateResult.rows[0]);
   } catch (error) {
-    await client.query('ROLLBACK'); // Rollback transaction in case of error
-    console.log('Error verifying invitation code:', error); // Log error for troubleshooting
-    res.status(400).json({ message: error.message }); // Return error message
+    await client.query('ROLLBACK');
+    console.error('Error verifying invitation code:', error);
+    res.status(400).json({ message: error.message });
   } finally {
-    client.release(); // Release client back to the pool
+    client.release();
   }
 });
-
 module.exports = router;
