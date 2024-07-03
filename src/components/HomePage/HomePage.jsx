@@ -55,7 +55,7 @@ function Homepage() {
 
   return (
     <Container maxWidth="lg" sx={{ marginTop: theme.spacing(4) }}>
-      \{/* Welcome message */}
+      {/* Welcome message */}
       <Typography
         variant="h4"
         sx={{
@@ -108,7 +108,7 @@ function Homepage() {
               backgroundColor: theme.palette.secondary.main,
             }}
           >
-            Join a Care Team
+            Join a CareTeam
           </Button>
         </Grid>
         <Grid item xs={6} sm={3}>
