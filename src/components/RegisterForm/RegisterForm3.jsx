@@ -7,11 +7,13 @@ function RegisterForm3() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
+  // Access Redux store for error handling
   const errors = useSelector((store) => store.errors);
   const dispatch = useDispatch();
   const history = useHistory();
 
   const Continue = () => {
+    // Dispatch first and last name to the store
     dispatch({
       type: "FIRST_LAST_NAME",
       payload: {
@@ -19,7 +21,9 @@ function RegisterForm3() {
         lastName: lastName,
       },
     });
+    // Navigate to the next registration page
     history.push("/registerpage/registerpage4");
+    // Maintenance: Ensure the navigation path is updated if the routing structure changes
   };
 
   return (
@@ -48,6 +52,7 @@ function RegisterForm3() {
         noValidate
         autoComplete="off"
       >
+        {/* First Name Input */}
         <Box className="MuiFormControl-root">
           <Typography variant="h6" sx={{ mr: 2, minWidth: "120px" }}>
             First Name
@@ -61,7 +66,9 @@ function RegisterForm3() {
             onChange={(event) => setFirstName(event.target.value)}
             sx={{ flexGrow: 1 }}
           />
+          {/* Maintenance: Validate first name input for special characters */}
         </Box>
+        {/* Last Name Input */}
         <Box className="MuiFormControl-root">
           <Typography variant="h6" sx={{ mr: 2, minWidth: "120px" }}>
             Last Name
@@ -75,7 +82,9 @@ function RegisterForm3() {
             onChange={(event) => setLastName(event.target.value)}
             sx={{ flexGrow: 1 }}
           />
+          {/* Maintenance: Validate last name input for special characters */}
         </Box>
+        {/* Continue Button */}
         <Button
           variant="contained"
           onClick={Continue}
@@ -85,6 +94,7 @@ function RegisterForm3() {
         >
           Continue
         </Button>
+        {/* Maintenance: Consider adding feedback for the user on successful or failed submission */}
       </Box>
     </>
   );
