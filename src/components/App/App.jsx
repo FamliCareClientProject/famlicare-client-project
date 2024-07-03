@@ -173,7 +173,7 @@ function App() {
                 <Redirect to="/homepage" />
               ) : (
                 // Otherwise, show the Landing page
-                <LandingPage />
+                <LoginPage />
               )}
             </Route>
 

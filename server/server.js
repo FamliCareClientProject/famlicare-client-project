@@ -13,7 +13,7 @@ const userRouter = require("./routes/user.router");
 const careTeamRouter = require("./routes/careTeam.router");
 const careVaultRouter = require("./routes/careVault.router");
 const lovedOneRouter = require("./routes/lovedOne.router");
-const messagesRouter = require("./routes/messages.router");
+// const messagesRouter = require("./routes/messages.router");
 // Express Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,7 +28,7 @@ app.use("/api/user", userRouter);
 app.use("/api/care-team", careTeamRouter);
 app.use("/api/care-vault", careVaultRouter);
 app.use("/api/loved-one", lovedOneRouter);
-app.use("/api/messages", messagesRouter);
+// app.use("/api/messages", messagesRouter);
 app.use("/fonts", express.static(path.join(__dirname, "../../public/fonts")));
 // Add CORS middleware
 const cors = require("cors");
