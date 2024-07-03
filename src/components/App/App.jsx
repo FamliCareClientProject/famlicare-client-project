@@ -17,7 +17,6 @@ import AboutPage from "../AboutPage/AboutPage";
 import UserPage from "../UserPage/UserPage";
 import EdituserPage from "../UserPage/EdituserPage";
 import InfoPage from "../InfoPage/InfoPage";
-// import LandingPage from "../LandingPage/LandingPage";
 import LoginPage from "../LoginPage/LoginPage";
 // import RegisterPage from "../RegisterPage/RegisterPage";
 //import components
@@ -174,7 +173,7 @@ function App() {
                 <Redirect to="/homepage" />
               ) : (
                 // Otherwise, show the Landing page
-                <LoginPage />
+                <LandingPage />
               )}
             </Route>
 
