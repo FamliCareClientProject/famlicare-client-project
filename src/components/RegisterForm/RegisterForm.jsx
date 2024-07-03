@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Container, Typography, Button, useTheme,Avatar,Grid,TextField, Box} from '@mui/material';
+import { Container, Typography, Button, useTheme, Avatar, Grid, TextField, Box } from '@mui/material';
 
 function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [emailAddress, setemailAddress] = useState("");
 
+  // Accessing the Redux store for error handling
   const errors = useSelector((store) => store.errors);
   const dispatch = useDispatch();
   const history = useHistory();
   const theme = useTheme();
 
+  // Function to handle user registration
   const signUp = () => {
+    // Dispatching user details to the store
     dispatch({
       type: "USERNAME_EMAIL_PASSWORD",
       payload: {
@@ -23,7 +26,9 @@ function RegisterForm() {
       },
     });
 
+    // Redirecting to the next page after successful registration
     history.push("/registerpage/registerpage1");
+    // Maintenance: Ensure the redirection path is updated if the route changes
   };
 
   return (
@@ -33,25 +38,26 @@ function RegisterForm() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center", // Center align items vertically
-          justifyContent: "center", // Center the box itself horizontally
-          margin: "auto", // Center the box between left and right margins
-          width: "fit-content", // Adjust the width of the box to fit its content
-          border: "2px solid", // Add a border around the box
-          borderColor: "#2a788b", // Use the theme's primary color for the border
-          padding: 2, // Add some padding inside the box for spacing
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "auto",
+          width: "fit-content",
+          border: "2px solid",
+          borderColor: "#2a788b",
+          padding: 2,
           "& .MuiFormControl-root": {
-            mt: 2, // Margin top for spacing between form controls
-            display: "flex", // Display as flex to align label and input side by side
-            flexDirection: "row", // Arrange label and input in a row
-            alignItems: "center", // Vertically center align the label and input
-            justifyContent: "space-between", // Distribute space between items
-            width: "100%", // Set width to 100% to fill the container
+            mt: 2,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
           },
         }}
         noValidate
         autoComplete="off"
       >
+        {/* Username input */}
         <Box className="MuiFormControl-root">
           <Typography variant="h6" sx={{ mr: 2, minWidth: "120px" }}>
             Username
@@ -63,9 +69,11 @@ function RegisterForm() {
             variant="outlined"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
-            sx={{ flexGrow: 1 }} // Allow the text field to grow to fill available space
+            sx={{ flexGrow: 1 }}
           />
+          {/* Troubleshooting: Ensure username meets backend validation criteria */}
         </Box>
+        {/* Email address input */}
         <Box className="MuiFormControl-root">
           <Typography variant="h6" sx={{ mr: 2, minWidth: "120px" }}>
             Email Address
@@ -79,7 +87,9 @@ function RegisterForm() {
             onChange={(event) => setemailAddress(event.target.value)}
             sx={{ flexGrow: 1 }}
           />
+          {/* Maintenance: Validate email format before submission */}
         </Box>
+        {/* Password input */}
         <Box className="MuiFormControl-root">
           <Typography variant="h6" sx={{ mr: 2, minWidth: "120px" }}>
             Password
@@ -94,18 +104,19 @@ function RegisterForm() {
             onChange={(event) => setPassword(event.target.value)}
             sx={{ flexGrow: 1 }}
           />
+          {/* Troubleshooting: Ensure password complexity meets security requirements */}
         </Box>
       </Box>
+      {/* Sign Up button */}
       <Button
         variant="contained"
-        className={
-          username && emailAddress && password ? "primary" : "primary off"
-        }
+        className={username && emailAddress && password ? "primary" : "primary off"}
         onClick={signUp}
         disabled={!(username && emailAddress && password)}
       >
         Sign Up
       </Button>
+      {/* Maintenance: Consider adding feedback for the user on successful or failed registration */}
     </>
   );
 }
