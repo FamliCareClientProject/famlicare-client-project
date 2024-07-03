@@ -13,7 +13,6 @@ const userRouter = require("./routes/user.router");
 const careTeamRouter = require("./routes/careTeam.router");
 const careVaultRouter = require("./routes/careVault.router");
 const lovedOneRouter = require("./routes/lovedOne.router");
-const messagesRouter = require("./routes/messages.router");
 // Express Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,10 +27,10 @@ app.use("/api/user", userRouter);
 app.use("/api/care-team", careTeamRouter);
 app.use("/api/care-vault", careVaultRouter);
 app.use("/api/loved-one", lovedOneRouter);
-app.use("/api/messages", messagesRouter);
 app.use("/fonts", express.static(path.join(__dirname, "../../public/fonts")));
-// Add CORS middleware
-const cors = require("cors");
+
+// Uncomment the CORS middleware if your application needs to accept requests from a different origin.
+// const cors = require("cors");
 // app.use(
 //   cors({
 //     origin: process.env.CORS_ORIGIN_HOST, // specify the allowed origin
@@ -39,7 +38,6 @@ const cors = require("cors");
 //   })
 // );
 
-//console.log(process.env.CORS_ORIGIN_HOST)
 // Socket.IO setup
 const httpServer = require("http").createServer(app);
 const { Server } = require("socket.io");
@@ -50,6 +48,8 @@ const io = new Server(httpServer, {
     credentials: true,
   },
 });
+
+// Middleware to determine if the request is a handshake
 function onlyForHandshake(middleware) {
   return (req, res, next) => {
     const isHandshake = req._query.sid === undefined;
@@ -60,27 +60,23 @@ function onlyForHandshake(middleware) {
     }
   };
 }
+
 io.engine.use(onlyForHandshake(sessionMiddleware));
 io.engine.use(onlyForHandshake(passport.session()));
-//postgres adapter to use pool with socket.io
+
+// Postgres adapter to use pool with socket.io for scalable real-time applications
 io.adapter(pgAdapter.createAdapter(pool));
+
 // Socket.IO connection/event listeners
 io.on("connection", (socket) => {
-  //server side when a user is connected
-  console.log("connected! User data is:", socket.request.user);
-  // console.log(socket.request)
   // Joins the User into a room
   socket.on("join_room", (room) => {
     socket.join(room);
-    console.log(`User${socket.id} Joined Room: ${room}`);
   });
-
-
 
   // Socket event listener for receiving a new message
   socket.on("new message", (message) => {
-    console.log("new message received!");
-    const newMessage = message.message_text
+    const newMessage = message.message_text;
     const userId = socket.request.user.id;
     const lovedOneId = socket.request.user.loved_one_id;
     const sqlText = `WITH new_message AS (
@@ -96,15 +92,12 @@ io.on("connection", (socket) => {
     pool
       .query(sqlText, sqlValues)
       .then((result) => {
-        console.log("send successful");
-        console.log(result.rows[0])
-        socket.broadcast.to(lovedOneId).emit("message recieved", result.rows[0]);
+        socket.broadcast.to(lovedOneId).emit("message received", result.rows[0]);
       })
       .catch((error) => {
         console.error("Error inserting message:", error);
       });
   });
-
 
   socket.on("fetch messages", (room) => {
     const sqlText = `SELECT
@@ -131,7 +124,9 @@ io.on("connection", (socket) => {
       });
   });
 });
+
 // Listen Server & Port
 httpServer.listen(PORT, () => {
+  // Server start-up message has been kept for troubleshooting purposes.
   console.log(`Listening on port: ${PORT}`);
 });
