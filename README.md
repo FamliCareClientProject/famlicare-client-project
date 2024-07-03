@@ -115,6 +115,13 @@ The application is deployed on Heroku. To deploy your own instance:
 Video walkthrough of application usage: 
 [FamliCare Walkthrough](https://youtu.be/5T8_dC_ZM8A)
 
+## Bugs and Issues
+1. There is a small bug when a newly registered invited user inputs their invitation code into the field to join a care team, an error alert will show "Error: unable to join care team" However, the code functionally works the way it's supposed to and the user will be successfully added to the CareTeam.
+2. ^^ Regarding the above scenario, after an invited user successfully inputs their code, the user should be routed to the CareTeam component to see that they are a new member of the CareTeam. However at this time the code does not route to the CareTeam component after inputting the invitation code and a user has to manually refresh the CareTeam component to see that they have been added to the list of CareTeam members.
+3. After an Admin User creates a Loved One, inputs all of the Loved One's information in the form and clicks submit after reviewing, the user sees a 'loading...' pop-up instead of the correct pop-up "You have successfully created a Loved One!". Although it shows loading, the Loved One should be successfully created.
+
+   Please see the walkthrough video for an example of these bugs!
+
 ## Built With
 
 - [React](https://reactjs.org/) - The web framework used
