@@ -6,6 +6,7 @@ import { Box, TextField, Button, Typography, useTheme, Avatar } from "@mui/mater
 function RegisterForm1() {
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  // Access Redux store for error handling
   const errors = useSelector((store) => store.errors);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -14,13 +15,17 @@ function RegisterForm1() {
   const Continue = (event) => {
     event.preventDefault();
 
+    // Dispatch phone number to the store
     dispatch({
       type: "PHONE_NUMBER",
       payload: {
         phoneNumber: phoneNumber,
       },
     });
+
+    // Navigate to the next registration page
     history.push("/registerpage/registerpage2");
+    // Maintenance: Ensure the navigation path is updated if the routing structure changes
   };
 
   return (
@@ -63,6 +68,7 @@ function RegisterForm1() {
             onChange={(event) => setPhoneNumber(event.target.value)}
             sx={{ flexGrow: 1 }}
           />
+          {/* Troubleshooting: If phone number validation fails, ensure it meets backend requirements */}
         </Box>
       </Box>
       <Button
@@ -73,6 +79,7 @@ function RegisterForm1() {
       >
         Continue
       </Button>
+      {/* Maintenance: Consider implementing feedback for the user on successful or failed submission */}
     </>
   );
 }

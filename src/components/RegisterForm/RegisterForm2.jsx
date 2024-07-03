@@ -1,25 +1,45 @@
-import React, { useRef, useState } from "react"; // Import useRef
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Box, Button, Typography, IconButton } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import axios from "axios";
-import PhotoCamera from '@mui/icons-material/PhotoCamera'; // Import MUI icon for the button
-import FormData from "form-data"; // Import FormData from axios-form-data
-
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
 function RegisterForm2() {
   const [selectedFile, setSelectedFile] = useState(null);
   const errors = useSelector((store) => store.errors);
   const dispatch = useDispatch();
   const history = useHistory();
-  const fileInputRef = useRef(null); // Create a ref for the file input
+  const fileInputRef = useRef(null);
 
   const handleFileSelect = (event) => {
     setSelectedFile(event.target.files[0]);
   };
 
-  const uploadImageToS3 = async () => {
-//todo
+  const uploadImageToS3 = async () => {//TODO fix upload function to enable upload to work.
+    if (!selectedFile) {
+      // Maintenance: Add error handling for no file selected
+      console.error("No file selected for upload.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      // Replace 'your-upload-url' with your actual S3 bucket upload URL
+      const response = await axios.post('your-upload-url', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      // Dispatch success action or navigate to another page upon success
+      // Maintenance: Update with actual dispatch or navigation as needed
+      console.log("Upload successful", response.data);
+    } catch (error) {
+      // Maintenance: Implement error handling strategy
+      console.error("Upload failed", error);
+    }
   };
 
   return (
@@ -48,19 +68,19 @@ function RegisterForm2() {
           ref={fileInputRef}
           onChange={handleFileSelect}
           accept="image/*"
-          style={{ display: 'none' }} // Hide the input element
+          style={{ display: 'none' }}
         />
         <Button
           variant="contained"
-          component="label" // Make the button act as a label for the hidden input
+          component="label"
           sx={{ mt: 2 }}
-          startIcon={<PhotoCamera />} // Add an icon to the button
+          startIcon={<PhotoCamera />}
           color="tertiary"
         >
           Upload Image
           <input
             type="file"
-            hidden // Hide this input but keep it for functionality
+            hidden
             onChange={handleFileSelect}
             accept="image/*"
           />
