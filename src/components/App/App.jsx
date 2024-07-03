@@ -26,7 +26,7 @@ import CreateOrjoinCareTeam from "../CreateOrJoinCareTeam/CreateOrJoinCareTeam";
 import CareTeamForm from "../CareTeamForm/CareTeamForm";
 import CareVault from "../CareVault/CareVault";
 import LovedOneForm from "../LovedOneForm/LovedOneForm";
-import Chat from "../Messages/Chat";
+import Chat from "../Messages/Chat"
 import NewUserForm from "../NewUserForm/NewUserForm";
 import { ThemeProvider } from "@mui/material";
 import theme from "../Theme/FamliCareTheme";
@@ -138,7 +138,7 @@ function App() {
 
             <ProtectedRoute exact path="/lovedoneform">
               <LovedOneForm />
-            </ProtectedRoute>
+            </ProtectedRoute> 
 
             <ProtectedRoute exact path="/newuserform">
               <NewUserForm />
@@ -172,8 +172,8 @@ function App() {
                 // redirect them to the /user page
                 <Redirect to="/homepage" />
               ) : (
-                // Otherwise, show the Landing page
-                <LandingPage />
+                // Otherwise, show the Login page
+                <LoginPage />
               )}
             </Route>
 
