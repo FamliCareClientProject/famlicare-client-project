@@ -1,114 +1,170 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
-import useSocketSetup from "./UseSocketSetup";
-import socket from "../../socket";
-import { Box, Typography, TextField, Button, Grid, useTheme } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import LovedOne_Name from "./LovedOne_Name.jsx";
+import LovedOne_Details from "./LovedOne_Details.jsx";
+import LovedOne_Address from "./LovedOne_Address.jsx";
+import LovedOne_Review from "./LovedOne_Review.jsx";
+import {
+  Box,
+  Button,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import {
+  CREATE_LOVED_ONE_REQUEST,
+  STORE_LOVED_ONE_NAME_INFO_REQUEST,
+  STORE_LOVED_ONE_DETAIL_INFO_REQUEST,
+  STORE_LOVED_ONE_ADDRESS_INFO_REQUEST,
+} from "../../redux/reducers/actions/lovedOne.actions.js";
 
-function Chat() {
-  const theme = useTheme();
-  const user = useSelector((store) => store.user);
-  const lovedOneID = user.loved_one_id;
-  const [room, setRoom] = useState(lovedOneID);
-  const [currentMessage, setCurrentMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-  const messagesContainerRef = useRef(null); // Create a reference to the messages container
+// Component for creating a new "Loved One" record
+// Utilizes Redux for state management and Material UI for styling
+const LovedOneForm = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const [step, setStep] = useState(1); // Controls the step in the form process
+  const loading = useSelector((state) => state.lovedOne?.loading); // Loading state for async actions
+  const error = useSelector((state) => state.lovedOne?.error); // Error state for handling API errors
+  const theme = useTheme(); // Access to Material UI theme for consistent styling
+  const lovedOne = useSelector((store) => store.lovedOneReducer); // Access to the current loved one state
+  const create_success = useSelector(
+    (state) => state.lovedOne?.createdSuccessfully
+  ); // Flag to check if creation was successful
+  const [openDialogCheck, setOpenDialogCheck] = useState(); // Controls visibility of the success dialog
 
-  useSocketSetup();
-
+  // Effect hook for handling errors and success state
   useEffect(() => {
-    socket.emit("join_room", room);
-    socket.emit("fetch messages", room);
+    if (error) {
+      // Consider implementing user-friendly error handling here
+    }
+    if (!!(create_success)) {
+      setOpenDialogCheck(true); // Open success dialog if creation was successful
+    }
+  }, [error, create_success, lovedOne?.id]);
 
-    socket.on("message recieved", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-      console.log("message is:", message);
-    });
+  // Closes the success dialog and navigates to the care team form
+  const handleClose = () => {
+    setOpenDialogCheck(false);
+    history.push("/careteamform"); // Ensure the route is correct and exists in your routing setup
+  };
 
-    return () => {
-      socket.off("connect_error");
-      socket.off("connected");
-      socket.off("messages");
-      socket.off("message recieved");
-    };
-  }, [setMessages]);
-
-  useEffect(() => {
-    socket.on("Have messages", (messages) => {
-      console.log("Received messages:", messages);
-      setMessages(messages);
-    });
-
-    return () => socket.off("Have messages");
-  }, [setMessages]);
-
-  const sendMessage = async () => {
-    if (currentMessage !== "") {
-      const message = {
-        message_text: currentMessage,
-        user_id: user.id,
-        loved_one_id: lovedOneID,
-        timestamp: Date.now(),
-      };
-      await socket.emit("new message", message);
-      setMessages((prevMsgs) => [...prevMsgs, message]);
-      setCurrentMessage("");
+  // Handles the transition to the next step in the form
+  // Dispatches actions to store form data in Redux state
+  const handleNextStep = (data) => {
+    switch (step) {
+      case 1:
+        dispatch({ type: STORE_LOVED_ONE_NAME_INFO_REQUEST, payload: data });
+        break;
+      case 2:
+        dispatch({ type: STORE_LOVED_ONE_DETAIL_INFO_REQUEST, payload: data });
+        break;
+      case 3:
+        dispatch({ type: STORE_LOVED_ONE_ADDRESS_INFO_REQUEST, payload: data });
+        break;
+      case 4:
+        dispatch({ type: CREATE_LOVED_ONE_REQUEST, payload: data }); // Final step triggers the creation action
+        break;
+      default:
+        // Consider implementing a fallback or error handling here
+    }
+    if (step < 4) {
+      setStep((prevStep) => prevStep + 1); // Safely increments the step
     }
   };
 
-  useEffect(() => {
-    // Auto-scroll to the last message
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+  // Handles moving back to the previous step in the form
+  const handlePrevStep = () => {
+    if (step > 1) {
+      setStep((prevStep) => prevStep - 1); // Ensure step does not go below 1
     }
-  }, [messages]);
+  };
+
+  // Renders the current step component based on the step state
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return <LovedOne_Name onSubmit={handleNextStep} />;
+      case 2:
+        return (
+          <LovedOne_Details
+            onSubmit={handleNextStep}
+            onPrevStep={handlePrevStep}
+          />
+        );
+      case 3:
+        return (
+          <LovedOne_Address
+            onSubmit={handleNextStep}
+            onPrevStep={handlePrevStep}
+          />
+        );
+      case 4:
+        return (
+          <LovedOne_Review
+            onSubmit={handleNextStep}
+            onPrevStep={handlePrevStep}
+          />
+        );
+      default:
+        return null; // Helps in debugging if an invalid step is set
+    }
+  };
 
   return (
-    <Box sx={{ padding: 2, height: "100vh", overflowY: "auto" }} ref={messagesContainerRef}>
-      <Typography variant="h5" gutterBottom>
-        CareTeam Chat
+    <div>
+      <Typography variant="h1" align="center">
+        Add your loved one
       </Typography>
-      <Grid container spacing={2}>
-        {messages.map((message, index) => (
-          <Grid item key={index} xs={12}>
-            <Box
-              sx={{
-                padding: 1,
-                borderRadius: 1,
-                backgroundColor: message.user_id === user.id ? theme.palette.primary.main : theme.palette.tertiary.light,
-                maxWidth: "80%",
-                marginLeft: message.user_id === user.id ? "auto" : 0,
-                marginRight: message.user_id === user.id ? 0 : "auto",
-              }}
-            >
-              <Typography variant="body1">
-                {user.id && (
-                  <strong>
-                    {message.user_id === user.id ? "You" : `${message.first_name} ${message.last_name}`}
-                  </strong>
-                )}
-                : {message.message_text}
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
-                {message.msg_sent_timestamp ? message.msg_sent_timestamp : new Date(message.timestamp).toLocaleTimeString()}
-              </Typography>
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
-      <Box sx={{ padding: 2, display: "flex", justifyContent: "space-between" }}>
-        <TextField
-          value={currentMessage}
-          onChange={(e) => setCurrentMessage(e.target.value)}
-          placeholder="Type a message..."
-          variant="outlined"
-          fullWidth
-        />
-        <Button variant="contained" color="primary" onClick={sendMessage}>
-          Send
-        </Button>
+      <Typography variant="h3" component="h2" align="center" mb={4}>
+        Step {step} of 4
+      </Typography>
+      <Box
+        sx={{
+          mx: "auto",
+          width: "80%",
+          padding: 2.5,
+          border: 2,
+          borderColor: theme.palette.primary.main,
+        }}
+      >
+        {loading && <p>Loading...</p>} {/* Display loading state to the user */}
+        {error && <p>Error: {error}</p>} {/* Display error messages to the user */}
+        {renderStep()}
+        <Dialog
+          open={!!(openDialogCheck)}
+          onClose={handleClose}
+          aria-labelledby="dialog-title"
+          aria-describedby="dialog-description"
+        >
+          <DialogTitle id="dialog-title">
+            Loved One Added Successfully!
+            <IconButton aria-label="close" onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="dialog-description">
+              {"Your loved one has been added successfully!"}
+            </DialogContentText>
+          </DialogContent>
+          <Button
+            variant="contained"
+            className="pop-up on"
+            onClick={handleClose}
+          >
+            OK
+          </Button>
+        </Dialog>
       </Box>
-    </Box>
+    </div>
   );
-}
+};
 
-export default Chat;
+export default LovedOneForm;
