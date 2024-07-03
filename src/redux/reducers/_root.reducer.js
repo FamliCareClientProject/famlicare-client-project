@@ -6,8 +6,6 @@ import careTeamReducer from './careTeam.reducer';
 import careVault from './careVault.reducer';
 import lovedOne from './lovedOne.reducer';
 
-import messages from './messages.reducer';
-
 // import messages from './messages.reducer';
 import editUserprofile from './editUser';
 
@@ -25,10 +23,6 @@ const rootReducer = combineReducers({
   careTeamReducer,
   careVault,
   lovedOne,
-
-  messages,
-
-  // messages,
   editUserprofile
 
 });
