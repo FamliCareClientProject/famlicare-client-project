@@ -34,7 +34,7 @@ function CreateOrJoinCareTeam() {
   const handleSubmitInvitationCode = (e) => {
     e.preventDefault();
     dispatch(verifyInvitationCode(invitationCode)); // Dispatch action to verify code
-    if (verificationSuccessful) {
+    if (verificationSuccessful) { //TODO: may need to add async/await to ensure the response is received and updated before checking for successful verification.
           history.push('/careteamform');
         }
         else{alert('Error! Unable to add to CareTeam')}

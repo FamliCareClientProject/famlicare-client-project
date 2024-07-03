@@ -13,21 +13,16 @@ import Footer from "../Footer/Footer";
 
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 
-import AboutPage from "../AboutPage/AboutPage";
 import UserPage from "../UserPage/UserPage";
 import EdituserPage from "../UserPage/EdituserPage";
-import InfoPage from "../InfoPage/InfoPage";
 import LoginPage from "../LoginPage/LoginPage";
-// import RegisterPage from "../RegisterPage/RegisterPage";
 //import components
 import HomePage from "../HomePage/HomePage";
-import Profile from "../Profile/Profile";
 import CreateOrjoinCareTeam from "../CreateOrJoinCareTeam/CreateOrJoinCareTeam";
 import CareTeamForm from "../CareTeamForm/CareTeamForm";
 import CareVault from "../CareVault/CareVault";
 import LovedOneForm from "../LovedOneForm/LovedOneForm";
 import Chat from "../Messages/Chat";
-import NewUserForm from "../NewUserForm/NewUserForm";
 import { ThemeProvider } from "@mui/material";
 import theme from "../Theme/FamliCareTheme";
 // Step components for registration process
@@ -38,6 +33,7 @@ import RegisterPage3 from "../RegisterPage/RegisterPage3";
 import RegisterPage4 from "../RegisterPage/RegisterPage4";
 
 import "./App.css";
+import LoginForm from "../LoginForm/LoginForm";
 
 function App() {
   const dispatch = useDispatch();
@@ -57,15 +53,6 @@ function App() {
             {/* Visiting localhost:5173 will redirect to localhost:5173/home */}
             <Redirect exact from="/" to="/home" />
 
-            {/* Visiting localhost:5173/about will show the about page. */}
-            <Route
-              // shows AboutPage at all times (logged in or not)
-              exact
-              path="/about"
-            >
-              <AboutPage />
-            </Route>
-
             {/* For protected routes, the view could show one of several things on the same route.
             Visiting localhost:5173/user will show the UserPage if the user is logged in.
             If the user is not logged in, the ProtectedRoute will show the LoginPage (component).
@@ -84,14 +71,6 @@ function App() {
               path="/homepage"
             >
               <HomePage />
-            </ProtectedRoute>
-
-            <ProtectedRoute
-              // logged in shows HomePage
-              exact
-              path="/profile"
-            >
-              <Profile />
             </ProtectedRoute>
 
             <ProtectedRoute
@@ -124,24 +103,12 @@ function App() {
               <Chat />
             </ProtectedRoute>
 
-            <ProtectedRoute
-              // logged in shows InfoPage else shows LoginPage
-              exact
-              path="/info"
-            >
-              <InfoPage />
-            </ProtectedRoute>
-
             <ProtectedRoute exact path="/careteamform">
               <CareTeamForm />
             </ProtectedRoute>
 
             <ProtectedRoute exact path="/lovedoneform">
               <LovedOneForm />
-            </ProtectedRoute>
-
-            <ProtectedRoute exact path="/newuserform">
-              <NewUserForm />
             </ProtectedRoute>
 
             <Route exact path="/login">
@@ -172,7 +139,7 @@ function App() {
                 // redirect them to the /user page
                 <Redirect to="/homepage" />
               ) : (
-                // Otherwise, show the Landing page
+                // Otherwise, show the Login page
                 <LoginPage />
               )}
             </Route>

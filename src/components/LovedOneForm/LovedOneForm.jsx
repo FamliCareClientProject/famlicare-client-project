@@ -42,7 +42,7 @@ const LovedOneForm = () => {
   // Effect hook for handling errors and success state
   useEffect(() => {
     if (error) {
-      console.error("An error occurred:", error); // Log errors for troubleshooting
+      // Consider implementing user-friendly error handling here
     }
     if (!!(create_success)) {
       setOpenDialogCheck(true); // Open success dialog if creation was successful
@@ -72,7 +72,7 @@ const LovedOneForm = () => {
         dispatch({ type: CREATE_LOVED_ONE_REQUEST, payload: data }); // Final step triggers the creation action
         break;
       default:
-        console.error("Invalid step"); // Helps in identifying issues with step logic
+        // Consider implementing a fallback or error handling here
     }
     if (step < 4) {
       setStep((prevStep) => prevStep + 1); // Safely increments the step
@@ -135,8 +135,7 @@ const LovedOneForm = () => {
         }}
       >
         {loading && <p>Loading...</p>} {/* Display loading state to the user */}
-        {error && <p>Error: {error}</p>}{" "}
-        {/* Display error messages to the user */}
+        {error && <p>Error: {error}</p>} {/* Display error messages to the user */}
         {renderStep()}
         <Dialog
           open={!!(openDialogCheck)}

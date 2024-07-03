@@ -8,39 +8,44 @@ function Chat() {
   const theme = useTheme();
   const user = useSelector((store) => store.user);
   const lovedOneID = user.loved_one_id;
-  const [room, setRoom] = useState(lovedOneID);
+  const [room, setRoom] = useState(lovedOneID); // Room ID is based on the loved one's ID
   const [currentMessage, setCurrentMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const messagesContainerRef = useRef(null); // Create a reference to the messages container
+  const messagesContainerRef = useRef(null); // Reference to the messages container for auto-scrolling
 
-  useSocketSetup();
+  useSocketSetup(); // Custom hook for setting up socket listeners
 
+  // Join room and fetch messages on component mount
   useEffect(() => {
-    socket.emit("join_room", room);
-    socket.emit("fetch messages", room);
+    socket.emit("join_room", room); // Join the chat room
+    socket.emit("fetch messages", room); // Request existing messages for the room
 
+    // Listener for receiving a new message
     socket.on("message recieved", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
-      console.log("message is:", message);
+      // Troubleshooting: Ensure that the message format received matches the expected format
     });
 
+    // Cleanup function to remove socket listeners on component unmount
     return () => {
       socket.off("connect_error");
       socket.off("connected");
       socket.off("messages");
       socket.off("message recieved");
     };
-  }, [setMessages]);
+  }, [room, setMessages]);
 
+  // Listener for receiving a batch of messages
   useEffect(() => {
     socket.on("Have messages", (messages) => {
-      console.log("Received messages:", messages);
       setMessages(messages);
+      // Troubleshooting: Check if messages are not being displayed, ensure this event is emitted by the server
     });
 
     return () => socket.off("Have messages");
   }, [setMessages]);
 
+  // Function to send a new message
   const sendMessage = async () => {
     if (currentMessage !== "") {
       const message = {
@@ -49,16 +54,18 @@ function Chat() {
         loved_one_id: lovedOneID,
         timestamp: Date.now(),
       };
-      await socket.emit("new message", message);
-      setMessages((prevMsgs) => [...prevMsgs, message]);
-      setCurrentMessage("");
+      await socket.emit("new message", message); // Emit the new message to the server
+      setMessages((prevMsgs) => [...prevMsgs, message]); // Optimistically update the UI
+      setCurrentMessage(""); // Clear the input field after sending
+      // Maintenance: Consider implementing feedback for message send failure
     }
   };
 
+  // Auto-scroll to the last message
   useEffect(() => {
-    // Auto-scroll to the last message
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      // Troubleshooting: If auto-scrolling is not working, check if this ref is correctly attached to the container
     }
   }, [messages]);
 
@@ -90,6 +97,7 @@ function Chat() {
               </Typography>
               <Typography variant="caption" color="textSecondary">
                 {message.msg_sent_timestamp ? message.msg_sent_timestamp : new Date(message.timestamp).toLocaleTimeString()}
+                {/* Maintenance: Ensure timestamp conversion is consistent with server and client time zones */}
               </Typography>
             </Box>
           </Grid>

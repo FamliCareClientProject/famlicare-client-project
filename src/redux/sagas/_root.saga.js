@@ -5,7 +5,6 @@ import userSaga from './user.saga';
 import careTeamSaga from './careTeam.saga';
 import careVaultSaga from './careVault.saga';
 import lovedOneSaga from './lovedOne.saga';
-import messagesSaga from './messages.saga';
 import editUsersaga from './editUserprofile.saga';
 
 // rootSaga is the primary saga.
@@ -23,7 +22,6 @@ export default function* rootSaga() {
     careTeamSaga(),
     careVaultSaga(),
     lovedOneSaga(),
-    messagesSaga(),
     editUsersaga(),
   ]);
 }
