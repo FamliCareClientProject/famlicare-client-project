@@ -112,6 +112,9 @@ The application is deployed on Heroku. To deploy your own instance:
 5. Standard and Admin users can view all of the members of the CareTeam.
 6. Invited users can receive an invitation code via email, register a new account and join a CareTeam with the invitation code.
 
+Video walkthrough of application usage: 
+[FamliCare Walkthrough](https://youtu.be/5T8_dC_ZM8A)
+
 ## Built With
 
 - [React](https://reactjs.org/) - The web framework used
