@@ -18,13 +18,11 @@ import EdituserPage from "../UserPage/EdituserPage";
 import LoginPage from "../LoginPage/LoginPage";
 //import components
 import HomePage from "../HomePage/HomePage";
-import Profile from "../Profile/Profile";
 import CreateOrjoinCareTeam from "../CreateOrJoinCareTeam/CreateOrJoinCareTeam";
 import CareTeamForm from "../CareTeamForm/CareTeamForm";
 import CareVault from "../CareVault/CareVault";
 import LovedOneForm from "../LovedOneForm/LovedOneForm";
 import Chat from "../Messages/Chat";
-import NewUserForm from "../NewUserForm/NewUserForm";
 import { ThemeProvider } from "@mui/material";
 import theme from "../Theme/FamliCareTheme";
 // Step components for registration process
@@ -55,7 +53,6 @@ function App() {
             {/* Visiting localhost:5173 will redirect to localhost:5173/home */}
             <Redirect exact from="/" to="/home" />
 
-
             {/* For protected routes, the view could show one of several things on the same route.
             Visiting localhost:5173/user will show the UserPage if the user is logged in.
             If the user is not logged in, the ProtectedRoute will show the LoginPage (component).
@@ -74,14 +71,6 @@ function App() {
               path="/homepage"
             >
               <HomePage />
-            </ProtectedRoute>
-
-            <ProtectedRoute
-              // logged in shows HomePage
-              exact
-              path="/profile"
-            >
-              <Profile />
             </ProtectedRoute>
 
             <ProtectedRoute
@@ -120,10 +109,6 @@ function App() {
 
             <ProtectedRoute exact path="/lovedoneform">
               <LovedOneForm />
-            </ProtectedRoute>
-
-            <ProtectedRoute exact path="/newuserform">
-              <NewUserForm />
             </ProtectedRoute>
 
             <Route exact path="/login">
