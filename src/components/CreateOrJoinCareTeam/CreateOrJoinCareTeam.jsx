@@ -47,7 +47,7 @@ function CreateOrJoinCareTeam() {
   return (
     <Box sx={{ maxWidth: 400, margin: "auto", textAlign: "center", mt: 4 }}>
       <Typography variant="h4" gutterBottom>
-        Care Team Setup
+        CareTeam Setup
       </Typography>
 
       <Box sx={{ mb: 4 }}>

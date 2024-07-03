@@ -189,7 +189,7 @@ function CareVault() {
   return (
     <>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <Typography variant="h1">Care Vault</Typography>
+        <Typography variant="h1">CareVault</Typography>
       </Box>
       <Container>
         {/* File upload button */}
