@@ -82,15 +82,9 @@ function CareTeamForm() {
    */
   useEffect(() =>{
     if (loved_one) {
-        console.log("Loved one's name: ",loved_one.first_name, loved_one.last_name);
         setLovedOneName(`${loved_one.first_name} ${loved_one.last_name}`);
     }
   }, [loved_one])
-
-  // Console logging for testing - consider removing or commenting out for production.
-  useEffect(() => {
-    console.log("Current team members:", teamMembers);
-  }, [teamMembers]);
 
   /**
    * Handles sending an email invitation to a new team member.
