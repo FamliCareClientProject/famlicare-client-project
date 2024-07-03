@@ -129,10 +129,12 @@ Video walkthrough of application usage:
 - [PostgreSQL](https://www.postgresql.org/) - Database
 - [Socket.io](https://socket.io/) - Used for real-time messaging
 - [Multer](https://github.com/expressjs/multer) - Used for handling file uploads
+- [Twilio/SendGrid](https://app.sendgrid.com/) - Used for sending invitation codes to invited users via transactional emails
+- [Material UI](https://mui.com/material-ui/) - Used for styling
 
 ## Authors
 
-- **Janet** - messaging, care team component
+- **Janet** - messaging, transactional emails component
 - **Mustafe** - messaging
 - **Jason** - theme styling, create a loved one flow
 - **Alex** - care vault
@@ -152,4 +154,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 If you have suggestions or issues, please email 
 at janet.lscanlon@gmail.com or vangalexa25@gmail.com
 
-```markdown
