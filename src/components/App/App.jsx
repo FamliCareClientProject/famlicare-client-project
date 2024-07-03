@@ -139,7 +139,7 @@ function App() {
                 // redirect them to the /user page
                 <Redirect to="/homepage" />
               ) : (
-                // Otherwise, show the login page
+                // Otherwise, show the Login page
                 <LoginPage />
               )}
             </Route>
