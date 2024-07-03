@@ -17,7 +17,7 @@ import AboutPage from "../AboutPage/AboutPage";
 import UserPage from "../UserPage/UserPage";
 import EdituserPage from "../UserPage/EdituserPage";
 import InfoPage from "../InfoPage/InfoPage";
-import LandingPage from "../LandingPage/LandingPage";
+// import LandingPage from "../LandingPage/LandingPage";
 import LoginPage from "../LoginPage/LoginPage";
 // import RegisterPage from "../RegisterPage/RegisterPage";
 //import components
@@ -27,7 +27,7 @@ import CreateOrjoinCareTeam from "../CreateOrJoinCareTeam/CreateOrJoinCareTeam";
 import CareTeamForm from "../CareTeamForm/CareTeamForm";
 import CareVault from "../CareVault/CareVault";
 import LovedOneForm from "../LovedOneForm/LovedOneForm";
-import Chat from "../Messages/Chat"
+import Chat from "../Messages/Chat";
 import NewUserForm from "../NewUserForm/NewUserForm";
 import { ThemeProvider } from "@mui/material";
 import theme from "../Theme/FamliCareTheme";
@@ -139,7 +139,7 @@ function App() {
 
             <ProtectedRoute exact path="/lovedoneform">
               <LovedOneForm />
-            </ProtectedRoute> 
+            </ProtectedRoute>
 
             <ProtectedRoute exact path="/newuserform">
               <NewUserForm />
@@ -174,7 +174,7 @@ function App() {
                 <Redirect to="/homepage" />
               ) : (
                 // Otherwise, show the Landing page
-                <LandingPage />
+                <LoginPage />
               )}
             </Route>
 
