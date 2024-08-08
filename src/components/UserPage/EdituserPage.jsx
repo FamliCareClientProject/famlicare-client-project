@@ -100,6 +100,7 @@ function EdituserPage() {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
+  const initials = user && user.name ? getInitials(user.name):'';
   return (
     <Container maxWidth="md">
       <Grid container spacing={2}>
@@ -110,7 +111,7 @@ function EdituserPage() {
               alt="Profile Picture"
               src={editUserprofile.image || ""}
             >
-              {!editUserprofile.image && getInitials(editUserprofile.first_name, editUserprofile.last_name)}
+              {!editUserprofile.image && initials}
             </Avatar>
           </Grid>
           <Grid item>
