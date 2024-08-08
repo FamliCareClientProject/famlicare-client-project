@@ -6,7 +6,7 @@ import { put, takeLatest, call } from "redux-saga/effects";
 import axios from "axios";
 
 // Base URL for the care vault API endpoints. Update this if the API location changes.
-const API_BASE_URL = "/api/care-vault";
+export const API_BASE_URL = "/api/care-vault";
 
 /**
  * Saga to handle file uploads.
