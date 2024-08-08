@@ -1,12 +1,14 @@
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import axios from "axios";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 
 function RegisterForm2() {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const errors = useSelector((store) => store.errors);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -24,6 +26,9 @@ function RegisterForm2() {
       console.error("No file selected for upload.");
       return;
     }
+
+    setLoading(true);
+    setSuccessMessage("");
 
     try {
       // Step 1: Get a pre-signed URL from the backend
@@ -52,8 +57,18 @@ function RegisterForm2() {
       });
 
       console.log("Upload successful", uploadResponse.data);
+
+      // Dispatch the image URL to the reducer
+      dispatch({
+        type: "IMAGE_SELECTED",
+        payload: uploadResponse.data.location, // Assuming the response contains the URL in `location`
+      });
+
+      setSuccessMessage("Upload successful!");
     } catch (error) {
       console.error("Upload failed", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,11 +119,22 @@ function RegisterForm2() {
           variant="contained"
           onClick={uploadImageToS3}
           sx={{ mt: 2 }}
-          disabled={!selectedFile}
+          disabled={!selectedFile || loading}
           className={!selectedFile ? "primary off" : "primary"}
         >
-          Submit Image
+          {loading ? <CircularProgress size={24} /> : "Submit Image"}
         </Button>
+        {successMessage && (
+          <Typography variant="body2" color="success.main" sx={{ mt: 2 }}>
+            {successMessage}
+          </Typography>
+        )}
+        {previewURL && (
+          <Box sx={{ mt: 2 }}>
+            <Typography>Preview:</Typography>
+            <img src={previewURL} alt="Preview" style={{ maxWidth: "100%", height: "auto" }} />
+          </Box>
+        )}
       </Box>
     </>
   );
