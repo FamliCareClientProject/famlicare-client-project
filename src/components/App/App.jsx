@@ -32,6 +32,7 @@ import RegisterPage2 from "../RegisterPage/RegisterPage2";
 import RegisterPage3 from "../RegisterPage/RegisterPage3";
 import RegisterPage4 from "../RegisterPage/RegisterPage4";
 
+
 import "./App.css";
 import LoginForm from "../LoginForm/LoginForm";
 
