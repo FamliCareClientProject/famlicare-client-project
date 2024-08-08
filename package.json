@@ -35,8 +35,9 @@
     "redux-saga": "^1.1.3",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5"
-  },  "scripts": {
-    "start": "NEW_RELIC_APP_NAME=Famlicare NEW_RELIC_LICENSE_KEY=19cb1ff9a908d37d92f898b692a3c3edFFFFNRAL node --experimental-loader=newrelic/esm-loader.mjs server/server.js",
+  },
+  "scripts": {
+    "start": "dotenv -e .env -- node --experimental-loader=newrelic/esm-loader.mjs server/server.js",
     "client": "vite",
     "server": "nodemon --watch server server/server.js",
     "build": "vite build",
@@ -44,6 +45,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
+    "dotenv-cli": "^7.0.0",
     "nodemon": "^3.1.3",
     "vite": "^5.2.11",
     "vitest": "^1.6.0"
@@ -52,7 +54,6 @@
     "production": [
       ">0.2%",
       "not dead",
-      "not ie <= 11",
       "not op_mini all"
     ],
     "development": [
@@ -60,6 +61,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "heroku-run-build-script": true
+  }
 }
