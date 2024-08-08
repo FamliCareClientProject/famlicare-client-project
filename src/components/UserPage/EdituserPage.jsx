@@ -74,6 +74,10 @@ function EdituserPage() {
 
   const handleProfileImageChange = (event) => {
     setProfileImage(event.target.files[0]);
+    dispatch({
+      type: "CHANGE-CURRENT PROFILE-IMAGE",
+      payload: URL.createObjectURL(event.target.files[0]),
+    });
   };
 
   const updateProfile = (event) => {

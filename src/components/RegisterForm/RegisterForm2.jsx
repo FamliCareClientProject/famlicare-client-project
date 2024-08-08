@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import axios from "axios";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
+import { API_BASE_URL } from "../../redux/sagas/careVault.saga"
 
 function RegisterForm2() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -32,10 +33,11 @@ function RegisterForm2() {
 
     try {
       // Step 1: Get a pre-signed URL from the backend
-      const presignedUrlResponse = await axios.get(
-        `/file/${selectedFile.name}`,
+            const presignedUrlResponse = await axios.get(
+        `${API_BASE_URL}/presigned-url`,
         {
           params: {
+            fileName: selectedFile.name,
             useType: "upload",
           },
         }
@@ -64,7 +66,7 @@ function RegisterForm2() {
         payload: uploadResponse.data.location, // Assuming the response contains the URL in `location`
       });
 
-      setSuccessMessage("Upload successful!");
+      setSuccessMessage("Upload successful! Click next to continue.");
     } catch (error) {
       console.error("Upload failed", error);
     } finally {
@@ -132,7 +134,11 @@ function RegisterForm2() {
         {previewURL && (
           <Box sx={{ mt: 2 }}>
             <Typography>Preview:</Typography>
-            <img src={previewURL} alt="Preview" style={{ maxWidth: "100%", height: "auto" }} />
+            <img
+              src={previewURL}
+              alt="Preview"
+              style={{ maxWidth: "100%", height: "auto" }}
+            />
           </Box>
         )}
       </Box>
