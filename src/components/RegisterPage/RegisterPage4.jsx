@@ -5,7 +5,6 @@ import { Box, Button, Typography, Paper, useTheme } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-
 function RegisterPage4() {
   const errors = useSelector((store) => store.errors);
   const registerReducer = useSelector((store) => store.registerReducer);
@@ -53,6 +52,12 @@ function RegisterPage4() {
         <Typography>{`Username: ${registerReducer.username}`}</Typography>
         <Typography>{`Email Address: ${registerReducer.emailAddress}`}</Typography>
         <Typography>{`Phone Number: ${registerReducer.phoneNumber}`}</Typography>
+        {registerReducer.profilePictureUrl && (
+          <Box sx={{ mt: 2 }}>
+            <Typography>Profile Picture:</Typography>
+            <img src={registerReducer.profilePictureUrl} alt="Profile" style={{ maxWidth: '100%', height: 'auto' }} />
+          </Box>
+        )}
       </Paper>
     </Box>
   );

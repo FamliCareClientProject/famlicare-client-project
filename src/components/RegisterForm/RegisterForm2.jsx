@@ -26,7 +26,7 @@ function RegisterForm2() {
     }
 
     try {
-      // Step 1: Get a pre-signed URL from your backend
+      // Step 1: Get a pre-signed URL from the backend
       const presignedUrlResponse = await axios.get(
         `/file/${selectedFile.name}`,
         {
