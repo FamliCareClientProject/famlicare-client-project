@@ -27,13 +27,27 @@ function* changeProfilevalues(action) {
     const updatedProfiledata = action.payload;
     const idofUser = updatedProfiledata.id;
     console.log("Sending update to server:", updatedProfiledata);
-    
+
+    // Create FormData to handle file upload
+    const formData = new FormData();
+    formData.append("username", updatedProfiledata.username);
+    formData.append("email", updatedProfiledata.email);
+    formData.append("phone_number", updatedProfiledata.phone_number);
+    formData.append("first_name", updatedProfiledata.first_name);
+    formData.append("last_name", updatedProfiledata.last_name);
+    if (updatedProfiledata.profileImage) {
+      formData.append("profileImage", updatedProfiledata.profileImage);
+    }
+
     const response = yield axios({
-        method: "PUT",
-        url: `/api/user/${idofUser}`,
-        data: updatedProfiledata
+      method: "PUT",
+      url: `/api/user/${idofUser}`,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
-    
+
     console.log("Server response:", response.data);
 
     // Update the user in the Redux store with the response data

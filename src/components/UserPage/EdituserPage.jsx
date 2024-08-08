@@ -1,5 +1,5 @@
 // Import necessary libraries and components
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Container,
@@ -25,14 +25,15 @@ function EdituserPage() {
   const user = useSelector((store) => store.user);
   const editUserprofile = useSelector((store) => store.editUserprofile);
 
+  // Local state for profile image
+  const [profileImage, setProfileImage] = useState(null);
+
   // Fetch user data for editing on component mount
   useEffect(() => {
     dispatch({
       type: "EDIT-USER-PROFILE",
       payload: id4userToedit,
     });
-    // Ensure the EDIT-USER-PROFILE action is correctly handled in your reducer
-    // This action should fetch and populate the form with the user's current information
   }, [dispatch, id4userToedit]);
 
   // Handlers for form field changes, dispatch actions to update local state
@@ -41,7 +42,6 @@ function EdituserPage() {
       type: "CHANGE-CURRENT USERNAME",
       payload: event.target.value,
     });
-    // Ensure the CHANGE-CURRENT USERNAME action updates the username in the local state
   };
 
   const handleEmailchange = (event) => {
@@ -49,7 +49,6 @@ function EdituserPage() {
       type: "CHANGE-CURRENT EMAIL",
       payload: event.target.value,
     });
-    // Ensure the CHANGE-CURRENT EMAIL action updates the email in the local state
   };
 
   const handlePhonechange = (event) => {
@@ -57,7 +56,6 @@ function EdituserPage() {
       type: "CHANGE-CURRENT PHONE-NUMBER",
       payload: event.target.value,
     });
-    // Ensure the CHANGE-CURRENT PHONE-NUMBER action updates the phone number in the local state
   };
 
   const handleFirstNameChange = (event) => {
@@ -65,7 +63,6 @@ function EdituserPage() {
       type: "CHANGE-CURRENT FIRST-NAME",
       payload: event.target.value,
     });
-    // Ensure the CHANGE-CURRENT PHONE-NUMBER action updates the phone number in the local state
   };
 
   const handleLastNameChange = (event) => {
@@ -73,101 +70,151 @@ function EdituserPage() {
       type: "CHANGE-CURRENT LAST-NAME",
       payload: event.target.value,
     });
-    // Ensure the CHANGE-CURRENT PHONE-NUMBER action updates the phone number in the local state
   };
 
+  const handleProfileImageChange = (event) => {
+    setProfileImage(event.target.files[0]);
+  };
 
   const updateProfile = (event) => {
     event.preventDefault();
+    const formData = new FormData();
+    formData.append("username", editUserprofile.username);
+    formData.append("email", editUserprofile.email);
+    formData.append("phone_number", editUserprofile.phone_number);
+    formData.append("first_name", editUserprofile.first_name);
+    formData.append("last_name", editUserprofile.last_name);
+    if (profileImage) {
+      formData.append("profileImage", profileImage);
+    }
+
     dispatch({
-      type: "CHANGE-PROFILE-VALUES",
-      payload: editUserprofile,
+      type: "UPDATE-USER-PROFILE",
+      payload: formData,
     });
-    // Ensure the CHANGE-PROFILE-VALUES action correctly updates the user's profile in the database
-    // Navigate back to UserPage with a state flag indicating a successful edit
+
     history.push("/user");
   };
 
-  return (
-    <Grid
-      container
-      alignItems="center"
-      justifyContent="center"
-      spacing={2}
-      sx={{ p: 4 }}
-    >
-      <Button
-        variant="outlined"
-        color="primary"
-        startIcon={<ArrowBack />}
-        onClick={() => history.goBack()}
-      >
-        {/** Back button to previous page */}
-        Back
-      </Button>
+  const getInitials = (firstName, lastName) => {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
 
-      <Grid item justifyContent="center">
-        <Avatar
-          sx={{ width: 100, height: 100 }}
-          alt="Profile Picture"
-          src="/path/to/profile-image.jpg" // Ensure the path to the profile image is correct
-        />
-        <Typography variant="h6" component="div" sx={{ mt: 2 }}>
-          Name
-        </Typography>
-        <TextField
-          variant="outlined"
-          value={editUserprofile.username || ""}
-          onChange={handleNamechange}
-          fullWidth
-          margin="normal"
-        />
-        <Typography variant="h6" component="div" sx={{ mt: 2 }}>
-          Email
-        </Typography>
-        <TextField
-          variant="outlined"
-          value={editUserprofile.email || ""}
-          onChange={handleEmailchange}
-          fullWidth
-          margin="normal"
-        />
-        <Typography variant="h6" component="div" sx={{ mt: 2 }}>
-          Phone Number
-        </Typography>
-        <TextField
-          variant="outlined"
-          value={editUserprofile.phone_number || ""}
-          onChange={handlePhonechange}
-          fullWidth
-          margin="normal"
-        />
-        <Typography variant="h6" component="div" sx={{ mt: 2 }}>
-          First Name
-        </Typography>
-        <TextField
-          variant="outlined"
-          value={editUserprofile.first_name || ""}
-          onChange={handleFirstNameChange}
-          fullWidth
-          margin="normal"
-        />
-        <Typography variant="h6" component="div" sx={{ mt: 2 }}>
-          Last Name
-        </Typography>
-        <TextField
-          variant="outlined"
-          value={editUserprofile.last_name|| ""}
-          onChange={handleLastNameChange}
-          fullWidth
-          margin="normal"
-        />
-        <Button variant="contained" sx={{ mt: 2 }} onClick={updateProfile}>
-          Save
-          {/** Button to save changes and update the user's profile */}
-        </Button>
+  const initials = user && user.name ? getInitials(user.name) : "";
+
+  return (
+    <Container maxWidth="md">
+      <Grid container spacing={2}>
+        <Grid item xs={12} container alignItems="center">
+          <Grid item>
+            <Avatar
+              sx={{ width: 100, height: 100 }}
+              alt="Profile Picture"
+              src={editUserprofile.image || ""}
+            >
+              {!editUserprofile.image && initials}
+            </Avatar>
+          </Grid>
+          <Grid item>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleProfileImageChange}
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={12} container alignItems="center">
+          <Grid item xs={3}>
+            <Typography variant="h6">Username</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <TextField
+              variant="outlined"
+              value={editUserprofile.username || ""}
+              onChange={handleNamechange}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={12} container alignItems="center">
+          <Grid item xs={3}>
+            <Typography variant="h6">Email</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <TextField
+              variant="outlined"
+              value={editUserprofile.email || ""}
+              onChange={handleEmailchange}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={12} container alignItems="center">
+          <Grid item xs={3}>
+            <Typography variant="h6">Phone Number</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <TextField
+              variant="outlined"
+              value={editUserprofile.phone_number || ""}
+              onChange={handlePhonechange}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={12} container alignItems="center">
+          <Grid item xs={3}>
+            <Typography variant="h6">First Name</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <TextField
+              variant="outlined"
+              value={editUserprofile.first_name || ""}
+              onChange={handleFirstNameChange}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={12} container alignItems="center">
+          <Grid item xs={3}>
+            <Typography variant="h6">Last Name</Typography>
+          </Grid>
+          <Grid item xs={9}>
+            <TextField
+              variant="outlined"
+              value={editUserprofile.last_name || ""}
+              onChange={handleLastNameChange}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          container
+          justifyContent="space-around"
+          alignItems="center"
+          style={{ marginTop: "20px" }}
+        >
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<ArrowBack />}
+            onClick={() => history.goBack()}
+          >
+            Back
+          </Button>
+          <Button variant="contained" onClick={updateProfile}>
+            Save
+          </Button>
+        </Grid>
       </Grid>
-    </Grid>
+    </Container>
   );
 }
 
