@@ -100,7 +100,8 @@ function EdituserPage() {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
-  const initials = user && user.name ? getInitials(user.name):'';
+  const initials = user && user.name ? getInitials(user.name) : "";
+
   return (
     <Container maxWidth="md">
       <Grid container spacing={2}>
@@ -192,7 +193,14 @@ function EdituserPage() {
             />
           </Grid>
         </Grid>
-        <Grid item xs={12} container justifyContent="space-around" alignItems="center" style={{ marginTop: '20px' }}>
+        <Grid
+          item
+          xs={12}
+          container
+          justifyContent="space-around"
+          alignItems="center"
+          style={{ marginTop: "20px" }}
+        >
           <Button
             variant="outlined"
             color="primary"
