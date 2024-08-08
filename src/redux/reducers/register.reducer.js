@@ -3,7 +3,7 @@ const initialState = {
   emailAddress: "",
   password: "",
   phoneNumber: "",
-  image: "",
+  image: null,
   firstName: "",
   lastName: "",
 };

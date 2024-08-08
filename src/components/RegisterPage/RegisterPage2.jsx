@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import RegisterForm2 from "../RegisterForm/RegisterForm2";
 import { Box, Button, Typography } from "@mui/material";
@@ -7,6 +7,13 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 function RegisterPage2() {
   const history = useHistory();
+  const [isUploadSuccessful, setIsUploadSuccessful] = useState(false);
+
+  const handleSuccessMessage = (message) => {
+    if (message === "Upload successful! Click next to continue.") {
+      setIsUploadSuccessful(true);
+    }
+  };
 
   return (
     <Box sx={{ textAlign: 'center', mt: 4 }}>
@@ -24,11 +31,12 @@ function RegisterPage2() {
           onClick={() => {
             history.push("/registerpage/registerpage3");
           }}
+          disabled={!isUploadSuccessful}
         >
           Next
         </Button>
       </Box>
-      <RegisterForm2 />
+      <RegisterForm2 onSuccessMessage={handleSuccessMessage} />
     </Box>
   );
 }

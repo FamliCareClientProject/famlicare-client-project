@@ -6,7 +6,7 @@ import { put, takeLatest, call } from "redux-saga/effects";
 import axios from "axios";
 
 // Base URL for the care vault API endpoints. Update this if the API location changes.
-const API_BASE_URL = "/api/care-vault";
+export const API_BASE_URL = "/api/care-vault";
 
 /**
  * Saga to handle file uploads.
@@ -74,12 +74,11 @@ function* fetchFiles() {
 function* getFileUrl(action) {
   try {
     console.log('action.payload is:', action.payload)
-    const response = yield call(axios.get, `${API_BASE_URL}/file/${action.payload.id}?useType=${action.payload.useType || 'view'}`);
+    const response = yield call(axios.get, `${API_BASE_URL}/presigned-url?fileName=${action.payload.fileName}&useType=${action.payload.useType || 'view'}`);
     yield put({ type: "SET_FILE_URL", payload: response.data });
   } catch (error) {
     console.error("Failed to get file URL", error);
     yield put({ type: "SET_FILE_ERROR", payload: error.message });
-    // Maintenance: Check for correct useType parameter and file ID validity.
   }
 }
 

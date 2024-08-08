@@ -14,6 +14,8 @@ const editUserprofile = (state = {}, action) => {
         return {...state, first_name: action.payload};
       case 'CHANGE-CURRENT LAST-NAME':
         return {...state, last_name: action.payload};
+      case 'CHANGE-CURRENT PROFILE-IMAGE':
+        return { ...state, profile_picture_url: action.payload };
       default:
         return state;
     }
