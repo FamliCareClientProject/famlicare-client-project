@@ -24,8 +24,8 @@ function UserPage() {
   const profileFields = [
     { label: "Username", value: user.username },
     { label: "Email", value: user.email },
-    { label: "Name", value: user.firstName + " " + user.lastName },
-    { label: "Phone Number", value: user.phoneNumber },
+    { label: "Name", value: user?.first_name + " " + user?.last_name },
+    { label: "Phone Number", value: user.phone_number },
     { label: "User ID", value: user.id },
   ];
 
@@ -34,7 +34,15 @@ function UserPage() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, p: 3, bgcolor: 'primary.light', color: theme.palette.common.white }}>
+    <Container
+      maxWidth="md"
+      sx={{
+        mt: 4,
+        p: 3,
+        bgcolor: "primary.light",
+        color: theme.palette.common.white,
+      }}
+    >
       <Paper elevation={3} sx={{ p: 3 }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item>
@@ -52,7 +60,11 @@ function UserPage() {
             </Typography>
           </Grid>
           <Grid item>
-            <Button variant="contained" className="primary" onClick={editUserinfo}>
+            <Button
+              variant="contained"
+              className="primary"
+              onClick={editUserinfo}
+            >
               Edit Profile
             </Button>
           </Grid>
@@ -66,9 +78,7 @@ function UserPage() {
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography variant="body1">
-                  {field.value}
-                </Typography>
+                <Typography variant="body1">{field.value}</Typography>
               </Grid>
             </React.Fragment>
           ))}
