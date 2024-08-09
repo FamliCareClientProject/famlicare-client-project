@@ -12,10 +12,10 @@ AWS.config.update({
 const s3 = new AWS.S3();
 
 // Function to upload files to AWS S3
-const s3Uploadv2 = async (file) => {
+const s3Uploadv2 = async (file, folder = 'uploads') => {
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `uploads/${file.originalname}`,
+    Key: `${folder}/${file.originalname}`,
     Body: file.buffer,
     ContentType: file.mimetype,
   };

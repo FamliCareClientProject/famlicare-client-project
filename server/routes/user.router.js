@@ -5,23 +5,14 @@ const {
 const encryptLib = require("../modules/encryption");
 const pool = require("../modules/pool");
 const userStrategy = require("../strategies/user.strategy");
+const { s3Uploadv2 } = require("../utils/s3Utils");
 
 const router = express.Router();
 
 // Multer setup for file upload
 const multer = require("multer");
-const path = require("path");
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "images")); // Destination folder where files will be stored
-  },
-
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname); // File naming convention
-  },
-});
-
-const upload = multer({ storage: storage });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // Handles Ajax request for user information if user is authenticated
 router.get("/", rejectUnauthenticated, (req, res) => {
@@ -33,18 +24,27 @@ router.get("/", rejectUnauthenticated, (req, res) => {
 // The only thing different from this and every other post we've seen
 // is that the password gets encrypted before being inserted
 
-router.post("/register", (req, res, next) => {
+router.post("/register", upload.single("image"), async (req, res, next) => {
   const username = req.body.registerReducer.username;
   const firstName = req.body.registerReducer.firstName;
   const lastName = req.body.registerReducer.lastName;
   const phoneNumber = req.body.registerReducer.phoneNumber;
-  const image = req.body.registerReducer.image;
-  console.log("here is THE Registeration object:", req.body.registerReducer);
   const password = encryptLib.encryptPassword(
     req.body.registerReducer.password
   );
   const email = req.body.registerReducer.emailAddress;
-  console.log("DATA in the Server!", req.body.registerReducer);
+
+  let imageUrl = null;
+  if (req.file) {
+    try {
+      const result = await s3Uploadv2(req.file, 'profile_image');
+      imageUrl = result.Location;
+    } catch (error) {
+      console.error("Error uploading profile image to S3:", error);
+      return res.status(500).json({ error: "Failed to upload profile image" });
+    }
+  }
+
   const queryText = `INSERT INTO "user" (username, first_name, last_name, email, password, phone_number, profile_picture_url)
     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`;
   pool
@@ -55,7 +55,7 @@ router.post("/register", (req, res, next) => {
       email,
       password,
       phoneNumber,
-      image,
+      imageUrl,
     ])
     .then(() => res.sendStatus(201))
     .catch((err) => {

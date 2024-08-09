@@ -15,7 +15,7 @@ const upload = multer({ storage }); // Initializes multer with memory storage.
 // Example route to handle file upload
 router.post("/upload", rejectUnauthenticated, upload.single("file"), async (req, res) => {
   try {
-    const result = await s3Uploadv2(req.file);
+    const result = await s3Uploadv2(req.file, 'uploads');
     res.status(200).json({ url: result.Location });
   } catch (error) {
     console.error("Error uploading file to S3:", error);
